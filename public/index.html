@@ -1,0 +1,106 @@
+<html>
+	<body>
+		<h1>Create Product</h1>
+		<form>
+			<label for="name">Name:</label>
+			<input
+				type="text"
+				id="name"
+				name="name"
+			/><br />
+
+			<label for="price">Price:</label>
+			<input
+				type="number"
+				id="price"
+				name="price"
+			/><br />
+
+			<label for="description">Description:</label>
+			<input
+				type="text"
+				id="description"
+				name="description"
+			/><br />
+
+			<label for="category">Category:</label>
+			<input
+				type="text"
+				id="category"
+				name="category"
+			/><br />
+
+			<button id="create-product-btn">Create Product</button>
+		</form>
+
+		<script>
+			const createProductBtn =
+				document.getElementById("create-product-btn");
+
+			createProductBtn.addEventListener("click", async (event) => {
+				event.preventDefault();
+
+				const name = document.getElementById("name").value;
+				const price = document.getElementById("price").value;
+				const description =
+					document.getElementById("description").value;
+				const category = document.getElementById("category").value;
+
+				const response = await fetch("/products", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						name: name,
+						price: price,
+						description: description,
+						category: category,
+					}),
+				});
+
+				const data = await response.json();
+				console.log(data);
+			});
+		</script>
+		<p>
+            <h1>PRODUCT LIST</h1>
+            <button id="reload-products-btn">Reload Products</button>
+            <ul id="product-list"></ul>            
+			<script>
+				const productList = document.getElementById("product-list");
+
+				async function loadProducts() {
+					try {
+						const response = await fetch("/products");
+						const products = await response.json();
+
+						productList.innerHTML = products
+							.map(
+								(product) =>
+									`<li>
+                        <h2>${product.name}</h2>
+                        <p>${product.description}</p>
+                        <p>$${product.price}</p>
+                        <p>${product.category}</p>
+                      </li>`
+							)
+							.join("");
+					} catch (error) {
+						console.error("Error loading products:", error);
+					}
+				}
+
+				loadProducts();
+
+                const reloadProductsBtn = document.getElementById("reload-products-btn");
+    const productsList = document.getElementById("product-list");
+
+    reloadProductsBtn.addEventListener("click", async () => {
+      loadProducts();
+    });
+  </script>
+			</script>
+		</p>
+	</body>
+</html>
